@@ -1,0 +1,61 @@
+package com.ecom.api.entity;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name="`order`")
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    @OneToOne
+    @JoinColumn(name="`creator_id`")
+    private User creator;
+    @OneToOne
+    @JoinColumn(name="`address_id`")
+    private Address address;
+    @OneToOne
+    @JoinColumn(name="`product_id`")
+    private Product product;
+    private Integer quantity;
+
+    public User getCreator() {
+        return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+}
