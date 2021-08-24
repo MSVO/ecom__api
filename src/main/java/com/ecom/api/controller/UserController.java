@@ -65,7 +65,7 @@ public class UserController {
     }
 
     @GetMapping("/addresses/{addressId}")
-    private  Object fetchAddressById(
+    private Object fetchAddressById(
             @RequestHeader(value="Authorization") String token,
             @PathVariable Integer addressId
     ) throws Exception {
@@ -77,6 +77,20 @@ public class UserController {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("address",processAddress(address));
         return responseBody;
+    }
+
+    @DeleteMapping("/addresses/{addressId}")
+    private Object deleteAddressById(
+        @RequestHeader(value="Authorization") String token,
+        @PathVariable Integer addressId
+    ) throws Exception {
+        User authenticatedUser = controllerUtility.obtainUserFromToken(token);
+        Address address = addressRepo.findById(addressId).get();
+        if (!address.getOwner().getId().equals(authenticatedUser.getId())) {
+            throw new Exception("Unauthorized");
+        }
+        addressRepo.deleteById(addressId);
+        return new HashMap<>();
     }
 
     private Address createAddressEntity(User owner, AddAddressRequestBody requestBody) {
