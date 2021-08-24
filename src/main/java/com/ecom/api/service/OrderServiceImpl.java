@@ -11,6 +11,7 @@ import com.ecom.api.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,5 +42,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Optional<Order> findById(Integer orderId) {
         return orderRepo.findById(orderId);
+    }
+
+    @Override
+    public List<Order> findAllByCreator(User creator) {
+        return orderRepo.findAllByCreator(creator);
     }
 }

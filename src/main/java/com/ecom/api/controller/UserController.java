@@ -3,9 +3,11 @@ package com.ecom.api.controller;
 import com.ecom.api.body.AddAddressRequestBody;
 import com.ecom.api.body.UserTokenRequestBody;
 import com.ecom.api.entity.Address;
+import com.ecom.api.entity.Order;
 import com.ecom.api.entity.User;
 import com.ecom.api.repo.AddressRepository;
 import com.ecom.api.repo.UserRepository;
+import com.ecom.api.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +23,8 @@ public class UserController {
     private AddressRepository addressRepo;
     @Autowired
     private ControllerUtility controllerUtility;
+    @Autowired
+    private OrderService orderService;
 
     private Map<String, Object> processAddress(Address address) {
         Map<String, Object> processedAddress = new HashMap<>();
@@ -114,6 +118,16 @@ public class UserController {
         newAddress = addressRepo.save(newAddress);
         Map<String , Object> responseBody = new HashMap<>();
         responseBody.put("addedAddressId", newAddress.getId());
+        return responseBody;
+    }
+
+    @GetMapping("/orders")
+    private Object getOrdersOfUser(@RequestHeader(value="Authorization") String token) throws Exception {
+        User authenticatedUser = controllerUtility.obtainUserFromToken(token);
+        List<Order> orders = orderService.findAllByCreator(authenticatedUser);
+        Map<String , Object> responseBody = new HashMap<>();
+        // TODO: don't return user passwords in order
+        responseBody.put("orders", orders);
         return responseBody;
     }
 }
