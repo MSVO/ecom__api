@@ -12,7 +12,7 @@ public class ControllerUtility {
     private UserRepository userRepo;
 
     public Integer obtainUserIdFromToken(String token) {
-        return Integer.valueOf(token);
+        return Integer.valueOf(token.split(":")[0]);
     }
     public User obtainUserFromToken(String token) throws Exception {
         return userRepo.findById(obtainUserIdFromToken(token)).get();

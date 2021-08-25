@@ -2,6 +2,7 @@ package com.ecom.api.controller;
 
 import com.ecom.api.body.UserTokenRequestBody;
 import com.ecom.api.entity.User;
+import com.ecom.api.entity.UserRole;
 import com.ecom.api.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/auth")
@@ -20,7 +22,14 @@ public class AuthController {
     private UserRepository userRepo;
 
     private String makeToken(User user) {
-        return user.getId().toString();
+        String token = "";
+        token = token + user.getId().toString() + ":";
+        Set<UserRole> userRoles = user.getUserRoles();
+        for (UserRole userRole : userRoles
+             ) {
+            token = token + userRole.getRole() + ";";
+        }
+        return token;
     }
 
     @PostMapping("/")

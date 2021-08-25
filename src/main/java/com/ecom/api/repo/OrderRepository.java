@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findAllByCreator(User creator);
+    List<Order> findByStatus(String status);
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -42,6 +43,23 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Optional<Order> findById(Integer orderId) {
         return orderRepo.findById(orderId);
+    }
+
+    @Override
+    public List<Order> findAllByMatchers(Map<String, Object> matchers) {
+
+        // TODO: Extend matcher to use other columns
+        if (matchers.containsKey("status")) {
+            return orderRepo.findByStatus(matchers.get("status").toString().toUpperCase());
+        } else {
+            return orderRepo.findAll();
+        }
+
+    }
+
+    @Override
+    public Order save(Order order) {
+        return orderRepo.save(order);
     }
 
     @Override

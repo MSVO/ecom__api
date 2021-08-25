@@ -1,6 +1,9 @@
 package com.ecom.api.entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name="`order`")
@@ -18,6 +21,36 @@ public class Order {
     @JoinColumn(name="`product_id`")
     private Product product;
     private Integer quantity;
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    @Type(type = "timestamp")
+    @Column(name = "creation_date")
+    private Date creationDate;
+    private String status;
+    private String remark;
 
     public User getCreator() {
         return creator;

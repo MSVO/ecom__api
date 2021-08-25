@@ -1,9 +1,7 @@
 package com.ecom.api.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -14,6 +12,16 @@ public class User {
     private String name;
     private String email;
     private String password;
+    @OneToMany(mappedBy = "user")
+    private Set<UserRole> userRoles;
+
+    public Set<UserRole> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(Set<UserRole> userRoles) {
+        this.userRoles = userRoles;
+    }
 
     public Integer getId() {
         return id;
