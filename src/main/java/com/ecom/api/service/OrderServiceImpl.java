@@ -11,6 +11,8 @@ import com.ecom.api.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +29,7 @@ public class OrderServiceImpl implements OrderService {
     private UserRepository userRepo;
 
     @Override
-    public Order createOrder(Integer creatorId, Integer addressId, Integer productId, Integer quantity) throws Exception {
+    public Order createOrder(Integer creatorId, Integer addressId, Integer productId, Integer quantity, String status) throws Exception {
         User creator = userRepo.findById(creatorId).get();
         Address address = addressRepo.findById(addressId).get();
         Product product = productRepo.findById(productId).get();
@@ -36,6 +38,8 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setAddress(address);
         newOrder.setProduct(product);
         newOrder.setQuantity(quantity);
+        newOrder.setStatus(status);
+        newOrder.setCreationDate(new Date());
         newOrder = orderRepo.save(newOrder);
         return newOrder;
     }
@@ -65,5 +69,40 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findAllByCreator(User creator) {
         return orderRepo.findAllByCreator(creator);
+    }
+
+    @Override
+    @Transactional
+    public Order acceptOrderById(Integer orderId, String remark) throws Exception {
+        Order order = findById(orderId).get();
+        if (order.getStatus().equals("PLACED")) {
+            Integer newStock = order.getProduct().getStock_quantity() - order.getQuantity();
+            if (newStock < 0) {
+                throw new Exception("Not enough stock");
+            }
+            Product product = order.getProduct();
+            product.setStock_quantity(newStock);
+            productRepo.save(product);
+            order.setStatus("ACCEPTED");
+            order.setRemark(remark);
+            orderRepo.save(order);
+            return orderRepo.findById(orderId).get();
+        } else {
+            throw new Exception("Invalid action");
+        }
+    }
+
+    @Override
+    @Transactional
+    public Order rejectOrderById(Integer orderId, String remark) throws Exception {
+        Order order = findById(orderId).get();
+        if (order.getStatus().equals("PLACED")) {
+            order.setStatus("REJECTED");
+            order.setRemark(remark);
+            orderRepo.save(order);
+            return orderRepo.findById(orderId).get();
+        } else {
+            throw new Exception("Invalid action");
+        }
     }
 }

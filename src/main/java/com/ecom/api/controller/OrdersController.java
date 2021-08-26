@@ -6,7 +6,6 @@ import com.ecom.api.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +49,7 @@ public class OrdersController {
         Integer addressId = requestBody.getAddressId();
         Integer productId = requestBody.getProductId();
         Integer quantity = requestBody.getQuantity();
-        Order createdOrder = orderService.createOrder(creatorId, addressId, productId, quantity);
+        Order createdOrder = orderService.createOrder(creatorId, addressId, productId, quantity, "PLACED");
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("createdOrder", createdOrder);
         return responseBody;
@@ -69,20 +68,20 @@ public class OrdersController {
         return responseBody;
     }
 
-    @Transactional
-    private Order performAction(Integer orderId, String action, String remark) {
+    private Order processedOrder(Order order) {
+        order.getCreator().setUserRoles(null);
+        return order;
+    }
+
+    private Order performAction(Integer orderId, String action, String remark) throws Exception {
         String status = null;
         if (action.equals("ACCEPT")) {
-            status = "ACCEPTED";
+            return orderService.acceptOrderById(orderId, remark);
         }
         if (action.equals("REJECT")) {
-            status = "REJECTED";
+            return orderService.rejectOrderById(orderId, remark);
         }
-        Order order = orderService.findById(orderId).get();
-        order.setStatus(status);
-        order.setRemark(remark);
-        orderService.save(order);
-        return order;
+        throw new Exception("Invalid action");
     }
 
     @PostMapping("/{orderId}")
@@ -92,7 +91,7 @@ public class OrdersController {
             @RequestBody Map<String, Object> requestBody
     ) throws Exception {
         // TODO: Authorization
-        if (!requestBody.get("action").equals(null)) {
+        if (requestBody.get("action") != null) {
             Order updatedOrder = performAction(orderId, (String) requestBody.get("action"), (String) requestBody.get("remark"));
             updatedOrder.getCreator().setUserRoles(null);
             Map<String, Object> responseBody = new HashMap<>();
