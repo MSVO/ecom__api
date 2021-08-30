@@ -5,6 +5,15 @@ public class NewProductRequestBody {
     private String description;
     private Integer price;
     private Integer stockQuantity;
+    private String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public String getName() {
         return name;

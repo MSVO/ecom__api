@@ -5,6 +5,7 @@ import com.ecom.api.body.UserTokenRequestBody;
 import com.ecom.api.entity.Address;
 import com.ecom.api.entity.Order;
 import com.ecom.api.entity.User;
+import com.ecom.api.entity.UserRole;
 import com.ecom.api.repo.AddressRepository;
 import com.ecom.api.repo.UserRepository;
 import com.ecom.api.service.OrderService;
@@ -25,6 +26,17 @@ public class UserController {
     private ControllerUtility controllerUtility;
     @Autowired
     private OrderService orderService;
+
+    private String makeToken(User user) {
+        String token = "";
+        token = token + user.getId().toString() + ":";
+        Set<UserRole> userRoles = user.getUserRoles();
+        for (UserRole userRole : userRoles
+        ) {
+            token = token + userRole.getRole() + ";";
+        }
+        return token;
+    }
 
     private Map<String, Object> processAddress(Address address) {
         Map<String, Object> processedAddress = new HashMap<>();
@@ -47,9 +59,10 @@ public class UserController {
         User newUser = new User();
         newUser.setEmail(requestBody.getEmail());
         newUser.setPassword(requestBody.getPassword());
+        newUser.setUserRoles(new HashSet<>());
         newUser = userRepo.save(newUser);
         Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("token", newUser.getId().toString());
+        responseBody.put("token", makeToken(newUser));
         return responseBody;
     }
 

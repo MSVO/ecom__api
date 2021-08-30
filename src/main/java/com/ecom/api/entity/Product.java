@@ -14,6 +14,15 @@ public class Product {
     private String description;
     private Integer price;
     private Integer stock_quantity;
+    private String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public Integer getId() {
         return id;

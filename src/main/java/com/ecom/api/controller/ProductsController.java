@@ -32,6 +32,7 @@ public class ProductsController {
         newProduct.setPrice(requestBody.getPrice());
         newProduct.setStock_quantity(requestBody.getStockQuantity());
         newProduct.setDescription(requestBody.getDescription());
+        newProduct.setImageUrl(requestBody.getImageUrl());
         newProduct = productRepo.save(newProduct);
         Map<String, Object> body = new HashMap<>();
         body.put("createdProduct", newProduct);
@@ -55,6 +56,7 @@ public class ProductsController {
         product.setDescription(requestBody.getDescription());
         product.setPrice(requestBody.getPrice());
         product.setStock_quantity(requestBody.getStockQuantity());
+        product.setImageUrl(requestBody.getImageUrl());
         product = productRepo.save(product);
         Map<String, Object> body = new HashMap<>();
         body.put("updatedProduct", product);
